@@ -14,7 +14,6 @@ object TpcDsBench extends App {
           |  local[4] q1,q53 10 true 0.4
         """.stripMargin)
       println("Using default arguments for local developments...")
-//      sys.exit(0)
     }
 
     val sparkMaster = if (args.length > 1) args(0) else "local[4]"
@@ -31,6 +30,7 @@ object TpcDsBench extends App {
   override def main(args: Array[String]) {
     val (queries, sc) = setupSparkContext(args)
     sc.parallelize(1 to 1000).collect()
+    sc.stop()
   }
 
 }

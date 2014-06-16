@@ -12,7 +12,7 @@ class TpcDsQueriesNotInUse(
   import hiveContext._
 
   // No window support
-  lazy val query12partitioned = hql("""
+  val query12partitioned = hql("""
     select i_item_desc
     ,i_category
     ,i_class
@@ -50,7 +50,7 @@ class TpcDsQueriesNotInUse(
                                     """)
 
 
-  lazy val query12 = hql("""
+  val query12 = hql("""
     select i_item_desc
     ,i_category
     ,i_class
@@ -86,7 +86,7 @@ class TpcDsQueriesNotInUse(
 
                          """)
 
-  lazy val query13 = hql("""
+  val query13 = hql("""
    -- shive.mapred.local.mem=3072
 
   select avg(ss_quantity) ,avg(ss_ext_sales_price) ,avg(ss_ext_wholesale_cost) ,sum(ss_ext_wholesale_cost)
@@ -232,7 +232,7 @@ class TpcDsQueriesNotInUse(
 
                     """)
 
-  lazy val query20 = hql("""
+  val query20 = hql("""
     select  i_item_desc
     ,i_category
     ,i_class
@@ -265,7 +265,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query21 = hql("""
+  val query21 = hql("""
 
     select  *
     from(select w_warehouse_name
@@ -296,7 +296,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query22 = hql("""
+  val query22 = hql("""
 
     select  i_product_name
     ,i_brand
@@ -367,7 +367,7 @@ class TpcDsQueriesNotInUse(
                     """)
 
 
-  lazy val query32 = hql("""
+  val query32 = hql("""
 
     SELECT sum(cs1.cs_ext_discount_amt) as excess_discount_amount
     FROM (SELECT cs.cs_item_sk as cs_item_sk,
@@ -432,7 +432,7 @@ class TpcDsQueriesNotInUse(
                     """)
 
 
-  lazy val query40 = hql("""
+  val query40 = hql("""
 
     select
     w_state
@@ -460,7 +460,7 @@ class TpcDsQueriesNotInUse(
 
                          """)
 
-  lazy val query45 = hql("""
+  val query45 = hql("""
     select  ca_zip, ca_county, sum(ws_sales_price)
     from
     web_sales
@@ -482,7 +482,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query48 = hql("""
+  val query48 = hql("""
 
     select sum (ss_quantity)
     from store_sales
@@ -547,7 +547,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query49 = hql("""
+  val query49 = hql("""
 
     select channel, item, return_ratio, return_rank, currency_rank from
     (
@@ -658,7 +658,7 @@ class TpcDsQueriesNotInUse(
 
                     """)
 
-  lazy val query58 = hql("""
+  val query58 = hql("""
 
     select  ss_items.item_id
     ,ss_item_rev
@@ -711,7 +711,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query64 = hql("""
+  val query64 = hql("""
 
     select cs1.product_name ,cs1.store_name ,cs1.store_zip ,cs1.b_street_number ,cs1.b_streen_name ,cs1.b_city
     ,cs1.b_zip ,cs1.c_street_number ,cs1.c_street_name ,cs1.c_city ,cs1.c_zip ,cs1.syear ,cs1.cnt
@@ -813,7 +813,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query66 = hql("""
+  val query66 = hql("""
 
     select
     w_warehouse_name ,w_warehouse_sq_ft ,w_city ,w_county ,w_state ,w_country
@@ -937,7 +937,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query67 = hql("""
+  val query67 = hql("""
 
     select  *
     from (select i_category ,i_class ,i_brand ,i_product_name ,d_year ,d_qoy
@@ -962,7 +962,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query70 = hql("""
+  val query70 = hql("""
     select
     sum(ss_net_profit) as total_sum
     ,s_state
@@ -1109,7 +1109,7 @@ class TpcDsQueriesNotInUse(
                     """)
 
 
-  lazy val query82 = hql("""
+  val query82 = hql("""
     select i_item_id
     ,i_item_desc
     ,i_current_price
@@ -1230,7 +1230,7 @@ class TpcDsQueriesNotInUse(
                     """)
 
 
-  lazy val query87 = hql("""
+  val query87 = hql("""
 
     select count(*)
     from (select distinct c_last_name as l1, c_first_name as f1, d_date as d1
@@ -1376,7 +1376,7 @@ class TpcDsQueriesNotInUse(
 
                     """)
 
-  lazy val query90 = hql("""
+  val query90 = hql("""
 
     select  cast(amc as decimal)/cast(pmc as decimal) am_pm_ratio
     from ( select count(*) amc
@@ -1405,7 +1405,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query91 = hql("""
+  val query91 = hql("""
 
     select
     cc_call_center_id as Call_Center,
@@ -1435,7 +1435,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query92 = hql("""
+  val query92 = hql("""
 
     SELECT sum(case when ssci.customer_sk is not null and csci.customer_sk is null then 1
   else 0 end) as store_only,
@@ -1486,7 +1486,7 @@ class TpcDsQueriesNotInUse(
                     """)
 
 
-  lazy val query94 = hql("""
+  val query94 = hql("""
 
     SELECT count(distinct ws_order_number) as order_count,
     sum(ws_ext_ship_cost) as total_shipping_cost,
@@ -1510,7 +1510,7 @@ class TpcDsQueriesNotInUse(
                          """)
 
 
-  lazy val query95 = hql("""
+  val query95 = hql("""
 
     SELECT count(distinct ws1.ws_order_number) as order_count,
   sum(ws1.ws_ext_ship_cost) as total_shipping_cost,
@@ -1558,7 +1558,7 @@ class TpcDsQueriesNotInUse(
                     """)
 
 
-  lazy val query97 = hql("""
+  val query97 = hql("""
 
     select sum(case when ssci.customer_sk is not null and csci.customer_sk is null then 1 else 0 end) store_only
   ,sum(case when ssci.customer_sk is null and csci.customer_sk is not null then 1 else 0 end) catalog_only

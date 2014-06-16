@@ -6,14 +6,14 @@ name := "sparksql-perf"
 
 version := "0.1"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
-// TODO: change to SNAPSHOT for local testing.
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "1.0.0",
-  "org.apache.spark" %% "spark-catalyst" % "1.0.0",
-  "org.apache.spark" %% "spark-hive" % "1.0.0",
-  "org.apache.spark" %% "spark-sql" % "1.0.0"
+  "org.apache.spark" %% "spark-core"      % "1.1.0-SNAPSHOT",
+  "org.apache.spark" %% "catalyst"        % "1.1.0-SNAPSHOT",
+  "org.apache.spark" %% "spark-hive"      % "1.1.0-SNAPSHOT",
+  "org.apache.spark" %% "spark-sql"       % "1.1.0-SNAPSHOT",
+  "org.scalatest"    %% "scalatest"       % "1.9.1"             % "test"
 )
 
 resolvers ++= Seq(
