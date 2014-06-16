@@ -1,0 +1,22 @@
+*~
+*.sw*
+*.ipr
+*.iml
+*.iws
+.idea/
+sbt/*.jar
+.DS_Store
+
+# For Hive
+metastore_db/
+metastore/
+warehouse/
+TempStatsStore/
+
+target/
+project/boot/
+project/plugins/project/build.properties
+project/build/target/
+project/plugins/target/
+project/plugins/lib_managed/
+project/plugins/src_managed/
