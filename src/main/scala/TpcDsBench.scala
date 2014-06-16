@@ -5,11 +5,16 @@ object TpcDsBench extends App {
   // TODO: think about output location (output case class -> able to be processed by Spark SQL)
   def setupSparkContext(args: Array[String]) = {
     if (args.size < 4) {
-      sys.error(
+      println(
         """
-          |usage:           <sparkMaster> <queries> <numIterPerQuery> [ignoreOutliers = 0.0]
-          |example:         local[4] q1,q53 10 true 0.4
+          |Usage:
+          |  <sparkMaster> <queries> <numIterPerQuery> [ignoreOutliers = 0.0]
+          |
+          |Example:
+          |  local[4] q1,q53 10 true 0.4
         """.stripMargin)
+      println("Using default arguments for local developments...")
+//      sys.exit(0)
     }
 
     val sparkMaster = if (args.length > 1) args(0) else "local[4]"
@@ -25,6 +30,7 @@ object TpcDsBench extends App {
 
   override def main(args: Array[String]) {
     val (queries, sc) = setupSparkContext(args)
+    sc.parallelize(1 to 1000).collect()
   }
 
 }
