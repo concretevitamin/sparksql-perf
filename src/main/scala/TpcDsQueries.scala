@@ -17,8 +17,6 @@ class TpcDsQueries(
 
   import hiveContext._
 
-  // TODO: commented out some queries that involve window functions.
-
   lazy val queryNameToObject = Map(
     "q19" -> q19,
     "q42" -> q42,

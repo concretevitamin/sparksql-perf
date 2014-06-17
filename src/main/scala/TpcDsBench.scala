@@ -19,7 +19,7 @@ object TpcDsBench extends App with BenchmarkUtils {
       println(
         """
           |Usage:
-          |  <sparkMaster> <queries> [numIterPerQuery = 1] [numWarmUpRuns = 0] [dropOutlierPerc = 0.0]
+          |  <sparkMaster> [queries] [numIterPerQuery = 1] [numWarmUpRuns = 0] [dropOutlierPerc = 0.0]
           |
           |Example:
           |  local[4] q19,q53,ss_max 10 1 0.4
@@ -28,9 +28,9 @@ object TpcDsBench extends App with BenchmarkUtils {
     }
 
     val sparkMaster = if (args.length > 1) args(0) else "local[4]"
-    val queries = if (args.length > 2) args(1).split(",").toSeq else Seq("q0")
+    val queries = if (args.length > 2) args(1).split(",").toSeq else Seq()
     val numIterPerQuery = if (args.length > 3) args(2).toInt else 1
-    val numWarmUpRuns = if (args.length > 4) args(3).toInt else 0
+    val numWarmUpRuns = if (args.length > 4) args(3).toInt else 1
     val dropOutlierPerc = if (args.length > 5) args(4).toDouble else 0.0
 
     val conf = new SparkConf()
@@ -39,8 +39,8 @@ object TpcDsBench extends App with BenchmarkUtils {
     val sc = new SparkContext(conf)
     val hc = new HiveContext(sc)
 
-    val queriesObj = new TpcDsQueries(hc, queries) // TODO: locations?
-    val tablesObj = new TpcDsTables(hc)
+    val queriesObj = new TpcDsQueries(hc, queries, System.getenv("TPCDS_DATA_DIR"))
+    val tablesObj = new TpcDsTables(hc, System.getenv("TPCDS_DATA_DIR"))
 
     val benchConfig = TpcDsBenchConfig(
       queriesObj,
@@ -59,7 +59,7 @@ object TpcDsBench extends App with BenchmarkUtils {
 
   def runWarmUp(benchConfig: TpcDsBenchConfig) = {
     for (i <- 1 to benchConfig.numWarmUpRuns) {
-      benchConfig.queriesObj.warmUpQuery.collect()
+      benchConfig.queriesObj.warmUpQuery.collect().foreach(println)
     }
   }
 
@@ -77,6 +77,7 @@ object TpcDsBench extends App with BenchmarkUtils {
   }
 
   override def main(args: Array[String]) {
+
     val (benchConfig, sc, hc) = setup(args)
 
     // NOTE: DDL commands should have been evaluated eagerly in setup() already.

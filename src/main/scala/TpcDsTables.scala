@@ -8,12 +8,10 @@ class TpcDsTables(
 
   import hiveContext._
 
-  // TODO: pass in correct HDFS locations?
-  // TODO: "stored as orc"?
-  // TODO: "tblproperties('orc.compress'='SNAPPY')"?
+  // TODO: store as parquet files?
 
   lazy val factTables = Seq(
-    inventory,
+    // inventory, // not used in targeted queries
     storeSales
   ).distinct
   lazy val dimTables = Seq(
@@ -29,8 +27,23 @@ class TpcDsTables(
   ).distinct
   lazy val allTables = factTables ++ dimTables
 
+  val tableNames = Seq(
+    "inventory",
+    "store_sales",
+    "customer",
+    "customer_address",
+    "customer_demographics",
+    "date_dim",
+    "household_demographics",
+    "item",
+    "promotion",
+    "store",
+    "time_dim"
+  )
+  tableNames.foreach(tbl => hql(s"DROP TABLE IF EXISTS $tbl"))
+
   val customer = hql(s"""
-    create external table customer
+    create external table IF NOT EXISTS customer
       (
         c_customer_sk             int,
         c_customer_id             string,
@@ -52,11 +65,11 @@ class TpcDsTables(
         c_last_review_date        string
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/customer'
   """)
 
   val customerAddress = hql(s"""
-    create external table customer_address
+    create external table IF NOT EXISTS customer_address
       (
         ca_address_sk             int,
         ca_address_id             string,
@@ -73,11 +86,11 @@ class TpcDsTables(
         ca_location_type          string
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/customer_address'
   """)
 
   val customerDemographics = hql(s"""
-    create external table customer_demographics
+    create external table IF NOT EXISTS customer_demographics
       (
         cd_demo_sk                int,
         cd_gender                 string,
@@ -90,11 +103,11 @@ class TpcDsTables(
         cd_dep_college_count      int
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/customer_demographics'
   """)
 
   val dateDim = hql(s"""
-    create external table date_dim
+    create external table IF NOT EXISTS date_dim
       (
         d_date_sk                 int,
         d_date_id                 string,
@@ -126,11 +139,11 @@ class TpcDsTables(
         d_current_year            string
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/date_dim'
   """)
 
   val householdDemographics = hql(s"""
-    create external table household_demographics
+    create external table IF NOT EXISTS household_demographics
       (
         hd_demo_sk                int,
         hd_income_band_sk         int,
@@ -139,11 +152,11 @@ class TpcDsTables(
         hd_vehicle_count          int
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/household_demographics'
   """)
 
   val inventory = hql(s"""
-    create external table inventory
+    create external table IF NOT EXISTS inventory
       (
         inv_date_sk			int,
         inv_item_sk			int,
@@ -151,11 +164,11 @@ class TpcDsTables(
         inv_quantity_on_hand	int
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/inventory'
   """)
 
   val item = hql(s"""
-    create external table item
+    create external table IF NOT EXISTS item
       (
         i_item_sk                 int,
         i_item_id                 string,
@@ -181,11 +194,11 @@ class TpcDsTables(
         i_product_name            string
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/item'
   """)
 
   val promotion = hql(s"""
-    create external table promotion
+    create external table IF NOT EXISTS promotion
       (
         p_promo_sk                int,
         p_promo_id                string,
@@ -208,11 +221,11 @@ class TpcDsTables(
         p_discount_active         string
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/promotion'
   """)
 
   val store = hql(s"""
-    create external table store
+    create external table IF NOT EXISTS store
       (
         s_store_sk                int,
         s_store_id                string,
@@ -245,11 +258,11 @@ class TpcDsTables(
         s_tax_precentage          float
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/store'
   """)
 
   val storeSales = hql(s"""
-    create external table store_sales
+    create external table IF NOT EXISTS store_sales
       (
         ss_sold_date_sk           int,
         ss_sold_time_sk           int,
@@ -276,11 +289,11 @@ class TpcDsTables(
         ss_net_profit             float
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/store_sales'
   """)
 
   val timeDim = hql(s"""
-    create external table time_dim
+    create external table IF NOT EXISTS time_dim
       (
         t_time_sk                 int,
         t_time_id                 string,
@@ -294,7 +307,7 @@ class TpcDsTables(
         t_meal_time               string
         )
     row format delimited fields terminated by '|'
-    location '$location'
+    location '$location/time_dim'
   """)
 
 }

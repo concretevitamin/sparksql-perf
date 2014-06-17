@@ -18,15 +18,18 @@ trait BenchmarkUtils {
     ((millis / 1e3).toLong, res)
   }
 
-  def runNumItersInMills[A](numIter: Int)(func: => A): Seq[Long] = {
-    (1 to numIter).map { _ =>
-      val (runTime, _) = runWithTimingInMillis("run") { func }
-      runTime
-    }
+
+  def runNumItersInMills[A]: (Int) => (=> A) => Seq[Long] = {
+    numIter => func =>
+      (1 to numIter).map { _ =>
+        val (runTime, _) = runWithTimingInMillis("run") { func }
+        runTime
+      }
   }
 
   /** Drops about dropOutlierPerc * nums.size outliers, half for the top and half for the bottom. */
-  def dropOutliers(dropOutlierPerc: Double)(nums: Seq[Long]): Seq[Long] = {
+  def dropOutliers(dropOutlierPerc: Double): Seq[Long] => Seq[Long] = {
+    nums =>
       val cnt = (nums.size * dropOutlierPerc).toInt
       val top = cnt / 2
       val bottom = cnt - top
