@@ -12,6 +12,23 @@ class TpcDsTables(
   // TODO: "stored as orc"?
   // TODO: "tblproperties('orc.compress'='SNAPPY')"?
 
+  lazy val factTables = Seq(
+    inventory,
+    storeSales
+  ).distinct
+  lazy val dimTables = Seq(
+    customer,
+    customerAddress,
+    customerDemographics,
+    dateDim,
+    householdDemographics,
+    item,
+    promotion,
+    store,
+    timeDim
+  ).distinct
+  lazy val allTables = factTables ++ dimTables
+
   val customer = hql(s"""
     create external table customer
       (
