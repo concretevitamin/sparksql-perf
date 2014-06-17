@@ -1,5 +1,6 @@
 import java.io.File
 
+import org.apache.spark.sql.SchemaRDD
 import org.apache.spark.sql.hive.HiveContext
 
 /**
@@ -66,7 +67,7 @@ class TpcDsQueries(
     qSsMax
   )
 
-  lazy val allQueries = queryNames.map(queryNameToObject(_))
+  lazy val allQueries: Seq[(String, SchemaRDD)] = queryNames.map(q => (q, queryNameToObject(q)))
 
   lazy val warmUpQuery = hql(
     """

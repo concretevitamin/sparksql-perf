@@ -1,19 +1,20 @@
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.{SparkConf, SparkContext}
 
-case class BenchConfig(
+case class TpcDsBenchConfig(
     @transient queriesObj: TpcDsQueries,
     @transient tablesObj: TpcDsTables,
     numIterPerQuery: Int,
     numWarmUpRuns: Int,
     dropOutlierPerc: Double)
 
-
-object TpcDsBench extends App {
+object TpcDsBench extends App with BenchmarkUtils {
 
   // TODO: think about output location (output case class -> able to be processed by Spark SQL)
 
-  def setup(args: Array[String]): (BenchConfig, SparkContext, HiveContext) = {
+  // TODO: how to take a conf (for hints)?
+
+  private def setup(args: Array[String]): (TpcDsBenchConfig, SparkContext, HiveContext) = {
     if (args.size < 4) {
       println(
         """
@@ -41,7 +42,7 @@ object TpcDsBench extends App {
     val queriesObj = new TpcDsQueries(hc, queries) // TODO: locations?
     val tablesObj = new TpcDsTables(hc)
 
-    val benchConfig = BenchConfig(
+    val benchConfig = TpcDsBenchConfig(
       queriesObj,
       tablesObj,
       numIterPerQuery,
@@ -52,13 +53,26 @@ object TpcDsBench extends App {
     (benchConfig, sc, hc)
   }
 
-  def setupTables(benchConfig: BenchConfig) = {
+  def setupTables(benchConfig: TpcDsBenchConfig) = {
     benchConfig.tablesObj.allTables.foreach(_.collect())
   }
 
-  def runWarmUp(benchConfig: BenchConfig) = {
+  def runWarmUp(benchConfig: TpcDsBenchConfig) = {
     (1 to benchConfig.numWarmUpRuns).foreach { _ =>
       benchConfig.queriesObj.warmUpQuery.collect()
+    }
+  }
+
+  def runQueries(benchConfig: TpcDsBenchConfig): Seq[BenchmarkResult] = {
+    val numIter = benchConfig.numIterPerQuery
+    val dropOutlierPerc = benchConfig.dropOutlierPerc
+
+    val benchmark = runNumItersInMills(numIter)   andThen
+                    dropOutliers(dropOutlierPerc) andThen
+                    average
+
+    benchConfig.queriesObj.allQueries.map { case (queryName, query) =>
+      BenchmarkResult(queryName, benchmark { query.collect() })
     }
   }
 
@@ -69,7 +83,8 @@ object TpcDsBench extends App {
     // setupTables(benchConfig)
     runWarmUp(benchConfig)
 
-    // TODO: (1) run queries (2) report results
+    // TODO: report/store results
+    val benchmarkResults = runQueries(benchConfig)
 
     sc.stop()
   }
