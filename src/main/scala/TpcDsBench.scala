@@ -58,7 +58,7 @@ object TpcDsBench extends App with BenchmarkUtils {
   }
 
   def runWarmUp(benchConfig: TpcDsBenchConfig) = {
-    (1 to benchConfig.numWarmUpRuns).foreach { _ =>
+    for (i <- 1 to benchConfig.numWarmUpRuns) {
       benchConfig.queriesObj.warmUpQuery.collect()
     }
   }
