@@ -25,7 +25,7 @@ Number of warm-up runs (before all queries, not each): 2
 Number of iterations per query: 10
 Outlier drop ratio: 0.2
 
-******** benchmark results
+******** benchmark results (runtime for 1 iteration, averaged from several runs)
 q19 runtime (millis): 10926
 q34 runtime (millis): 9585
 ss_max runtime (millis): 5460

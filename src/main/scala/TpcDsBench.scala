@@ -91,7 +91,7 @@ object TpcDsBench extends App with BenchmarkUtils {
          |******** benchmark config
          |$conf
          |
-         |******** benchmark results
+         |******** benchmark results (runtime for 1 iteration, averaged from several runs)
          |$res
        """.stripMargin
     println()
