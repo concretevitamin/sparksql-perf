@@ -2,4 +2,4 @@
 
 # Configure this to the directory storing the generated data.
 TPCDS_DATA_DIR=/user/$USER/tpcds-data \
-sbt "runMain TpcDsBench"
+sbt "runMain TpcDsBench $@"

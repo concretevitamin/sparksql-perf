@@ -6,7 +6,14 @@ case class TpcDsBenchConfig(
     @transient tablesObj: TpcDsTables,
     numIterPerQuery: Int,
     numWarmUpRuns: Int,
-    dropOutlierPerc: Double)
+    dropOutlierPerc: Double) {
+  override def toString = {
+    val warm = s"Number of warm-up runs (before all queries, not each): $numWarmUpRuns"
+    val iter = s"Number of iterations per query: $numIterPerQuery"
+    val outlier = s"Outlier drop ratio: $dropOutlierPerc"
+    Seq(warm, iter, outlier).mkString("\n")
+  }
+}
 
 object TpcDsBench extends App with BenchmarkUtils {
 
@@ -15,23 +22,24 @@ object TpcDsBench extends App with BenchmarkUtils {
   // TODO: how to take a conf (for hints)?
 
   private def setup(args: Array[String]): (TpcDsBenchConfig, SparkContext, HiveContext) = {
-    if (args.size < 4) {
+    if (args.size < 1) {
       println(
         """
           |Usage:
-          |  <sparkMaster> [queries] [numIterPerQuery = 1] [numWarmUpRuns = 0] [dropOutlierPerc = 0.0]
+          |  <sparkMaster> [queries] [numIterPerQuery = 1] [numWarmUpRuns = 1] [dropOutlierPerc = 0.0]
           |
           |Example:
           |  local[4] q19,q53,ss_max 10 1 0.4
         """.stripMargin)
-      println("Using default arguments for local developments...")
+      sys.exit()
     }
 
-    val sparkMaster = if (args.length > 1) args(0) else "local[4]"
-    val queries = if (args.length > 2) args(1).split(",").toSeq else Seq()
-    val numIterPerQuery = if (args.length > 3) args(2).toInt else 1
-    val numWarmUpRuns = if (args.length > 4) args(3).toInt else 1
-    val dropOutlierPerc = if (args.length > 5) args(4).toDouble else 0.0
+    val sparkMaster = if (args.length > 0) args(0) else "local[4]"
+    val queries = if (args.length > 1) args(1).split(",").toSeq else Seq()
+
+    val numIterPerQuery = if (args.length > 2) args(2).toInt else 1
+    val numWarmUpRuns = if (args.length > 3) args(3).toInt else 1
+    val dropOutlierPerc = if (args.length > 4) args(4).toDouble else 0.0
 
     val conf = new SparkConf()
       .setMaster(sparkMaster)
@@ -76,16 +84,28 @@ object TpcDsBench extends App with BenchmarkUtils {
     }
   }
 
-  override def main(args: Array[String]) {
+  def printBenchmarkResults(conf: TpcDsBenchConfig, results: Seq[BenchmarkResult]) = {
+    val res = results.map(_.toString).mkString("\n")
+    val giant =
+      s"""
+         |******** benchmark config
+         |$conf
+         |
+         |******** benchmark results
+         |$res
+       """.stripMargin
+    println()
+    println(giant)
+    println()
+  }
 
+  override def main(args: Array[String]) {
     val (benchConfig, sc, hc) = setup(args)
 
-    // NOTE: DDL commands should have been evaluated eagerly in setup() already.
-    // setupTables(benchConfig)
     runWarmUp(benchConfig)
 
-    // TODO: report/store results
     val benchmarkResults = runQueries(benchConfig)
+    printBenchmarkResults(benchConfig, benchmarkResults)
 
     sc.stop()
   }

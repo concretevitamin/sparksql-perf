@@ -4,7 +4,9 @@
 trait BenchmarkUtils {
 
   // TODO: other fields? e.g. detailed runtime breakdowns by types (computation vs. communication) or by stages.
-  case class BenchmarkResult(queryName: String, runTimeInMillis: Long)
+  case class BenchmarkResult(benchmarkName: String, runTimeInMillis: Long) {
+    override def toString = s"$benchmarkName runtime (millis): $runTimeInMillis"
+  }
 
   def runWithTimingInMillis[A](desc: Any)(f: => A): (Long, A) = {
     val start = System.nanoTime()
