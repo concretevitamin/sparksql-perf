@@ -288,7 +288,8 @@ class TpcDsParquetTables(
     location '$location/store'
   """)
 
-  lazy val storeSales = hql(s"""
+  lazy val storeSales = {
+    hql(s"""
     create external table IF NOT EXISTS store_sales
       (
         ss_sold_time_sk           int,
@@ -321,6 +322,19 @@ class TpcDsParquetTables(
       outputformat 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     location '$location/store_sales'
   """)
+
+    // Add partitions. There is no data for 2450875, 2451240, 2451971, and 2452336.
+    val partitionKeys = (2450816 until 2452643).filter { k =>
+      k != 2450875 && k != 2451240 && k != 2451971 && k != 2452336
+    }
+    partitionKeys.foreach { k =>
+      sql(s"""
+          ALTER TABLE store_sales ADD PARTITION (ss_sold_date_sk=${k})
+          location '${location}/ss_sold_date_sk=${k}'
+      """)
+    }
+  }
+
 
   lazy val timeDim = hql(s"""
     create external table IF NOT EXISTS time_dim
