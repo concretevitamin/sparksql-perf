@@ -39,7 +39,7 @@ class TpcDsParquetTables(
     "time_dim"
   )
 
-  tableNames.foreach(tbl => hql(s"DROP TABLE IF EXISTS $tbl"))
+//  tableNames.foreach(tbl => hql(s"DROP TABLE IF EXISTS $tbl"))
 
 
   lazy val customer = hql(s"""
@@ -291,7 +291,6 @@ class TpcDsParquetTables(
   lazy val storeSales = hql(s"""
     create external table IF NOT EXISTS store_sales
       (
-        ss_sold_date_sk           int,
         ss_sold_time_sk           int,
         ss_item_sk                int,
         ss_customer_sk            int,
@@ -315,6 +314,7 @@ class TpcDsParquetTables(
         ss_net_paid_inc_tax       float,
         ss_net_profit             float
         )
+    PARTITIONED BY (ss_sold_date_sk int)
     row format serde 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
     stored as
       inputformat 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
