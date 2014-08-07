@@ -3,7 +3,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 case class TpcDsBenchConfig(
     @transient queriesObj: TpcDsQueries,
-    @transient tablesObj: TpcDsTables,
+    @transient tablesObj: TpcDsParquetTables,
     numIterPerQuery: Int,
     numWarmUpRuns: Int,
     dropOutlierPerc: Double) {
@@ -15,11 +15,11 @@ case class TpcDsBenchConfig(
   }
 }
 
-object TpcDsBench extends App with BenchmarkUtils {
+object TpcDsBench extends BenchmarkUtils {
 
   // TODO: think about output location (output case class -> able to be processed by Spark SQL)
 
-  private def setup(args: Array[String]): (TpcDsBenchConfig, SparkContext, HiveContext) = {
+  def setup(args: Array[String]): (TpcDsBenchConfig, SparkContext, HiveContext) = {
     if (args.size < 1) {
       println(
         """
@@ -51,7 +51,7 @@ object TpcDsBench extends App with BenchmarkUtils {
     properties.foreach(s => hc.set(s.split("=")(0), s.split("=")(1)))
 
     val queriesObj = new TpcDsQueries(hc, queries, System.getenv("TPCDS_DATA_DIR"))
-    val tablesObj = new TpcDsTables(hc, System.getenv("TPCDS_DATA_DIR"))
+    val tablesObj = new TpcDsParquetTables(hc, System.getenv("TPCDS_DATA_DIR"))
 
     val benchConfig = TpcDsBenchConfig(
       queriesObj,
@@ -102,7 +102,7 @@ object TpcDsBench extends App with BenchmarkUtils {
     println()
   }
 
-  override def main(args: Array[String]) {
+  def main(args: Array[String]) {
     val (benchConfig, sc, hc) = setup(args)
 
     runWarmUp(benchConfig)

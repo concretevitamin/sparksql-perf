@@ -40,9 +40,11 @@ class TpcDsTables(
     "store",
     "time_dim"
   )
+
   tableNames.foreach(tbl => hql(s"DROP TABLE IF EXISTS $tbl"))
 
-  val customer = hql(s"""
+
+  lazy val customer = hql(s"""
     create external table IF NOT EXISTS customer
       (
         c_customer_sk             int,
@@ -68,7 +70,7 @@ class TpcDsTables(
     location '$location/customer'
   """)
 
-  val customerAddress = hql(s"""
+  lazy val customerAddress = hql(s"""
     create external table IF NOT EXISTS customer_address
       (
         ca_address_sk             int,
@@ -89,7 +91,7 @@ class TpcDsTables(
     location '$location/customer_address'
   """)
 
-  val customerDemographics = hql(s"""
+  lazy val customerDemographics = hql(s"""
     create external table IF NOT EXISTS customer_demographics
       (
         cd_demo_sk                int,
@@ -106,7 +108,7 @@ class TpcDsTables(
     location '$location/customer_demographics'
   """)
 
-  val dateDim = hql(s"""
+  lazy val dateDim = hql(s"""
     create external table IF NOT EXISTS date_dim
       (
         d_date_sk                 int,
@@ -142,7 +144,7 @@ class TpcDsTables(
     location '$location/date_dim'
   """)
 
-  val householdDemographics = hql(s"""
+  lazy val householdDemographics = hql(s"""
     create external table IF NOT EXISTS household_demographics
       (
         hd_demo_sk                int,
@@ -155,7 +157,7 @@ class TpcDsTables(
     location '$location/household_demographics'
   """)
 
-  val inventory = hql(s"""
+  lazy val inventory = hql(s"""
     create external table IF NOT EXISTS inventory
       (
         inv_date_sk			int,
@@ -167,7 +169,7 @@ class TpcDsTables(
     location '$location/inventory'
   """)
 
-  val item = hql(s"""
+  lazy val item = hql(s"""
     create external table IF NOT EXISTS item
       (
         i_item_sk                 int,
@@ -197,7 +199,7 @@ class TpcDsTables(
     location '$location/item'
   """)
 
-  val promotion = hql(s"""
+  lazy val promotion = hql(s"""
     create external table IF NOT EXISTS promotion
       (
         p_promo_sk                int,
@@ -224,7 +226,7 @@ class TpcDsTables(
     location '$location/promotion'
   """)
 
-  val store = hql(s"""
+  lazy val store = hql(s"""
     create external table IF NOT EXISTS store
       (
         s_store_sk                int,
@@ -261,7 +263,7 @@ class TpcDsTables(
     location '$location/store'
   """)
 
-  val storeSales = hql(s"""
+  lazy val storeSales = hql(s"""
     create external table IF NOT EXISTS store_sales
       (
         ss_sold_date_sk           int,
@@ -292,7 +294,7 @@ class TpcDsTables(
     location '$location/store_sales'
   """)
 
-  val timeDim = hql(s"""
+  lazy val timeDim = hql(s"""
     create external table IF NOT EXISTS time_dim
       (
         t_time_sk                 int,
