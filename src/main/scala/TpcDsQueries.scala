@@ -57,7 +57,7 @@ class TpcDsQueries(
     qSsMax
   )
 
-  lazy val allQueries: Seq[(String, SchemaRDD)] = queryNames.map(q => (q, queryNameToObject(q)))
+  lazy val allQueries: Map[String, SchemaRDD] = queryNames.map(q => (q, queryNameToObject(q))).toMap
 
   lazy val warmUpQuery = hql(
     """
@@ -66,7 +66,7 @@ class TpcDsQueries(
 
   /*********************** Real Queries ************************/
 
-  val q3 = hql("""
+  lazy val q3 = hql("""
     select  d_year
     ,item.i_brand_id brand_id
     ,item.i_brand brand
@@ -85,7 +85,7 @@ class TpcDsQueries(
     ,brand_id
       limit 100""")
 
-  val q7 = hql("""
+  lazy val q7 = hql("""
     select  i_item_id,
     avg(ss_quantity) agg1,
     avg(ss_list_price) agg2,
@@ -106,7 +106,7 @@ class TpcDsQueries(
   order by i_item_id
   limit 100""")
 
-  val q19 = hql("""
+  lazy val q19 = hql("""
 
     select  i_brand_id, i_brand, i_manufact_id, i_manufact,
     sum(ss_ext_sales_price) as ext_price
@@ -132,7 +132,7 @@ class TpcDsQueries(
     ,i_manufact
       limit 100""")
 
-  val q27partitioned = hql("""
+  lazy val q27partitioned = hql("""
     select  i_item_id,
     s_state,
     avg(ss_quantity) agg1,
@@ -156,7 +156,7 @@ class TpcDsQueries(
   ,s_state
   limit 100""")
 
-  val q27 = hql("""
+  lazy val q27 = hql("""
     select  i_item_id,
     s_state,
     avg(ss_quantity) agg1,
@@ -179,7 +179,7 @@ class TpcDsQueries(
   ,s_state
   limit 100""")
 
-  val q34 = hql("""
+  lazy val q34 = hql("""
     select c_last_name
     ,c_first_name
     ,c_salutation
@@ -211,7 +211,7 @@ class TpcDsQueries(
   cnt between 15 and 20
   order by c_last_name,c_first_name,c_salutation,c_preferred_cust_flag desc""")
 
-  val q42 = hql("""
+  lazy val q42 = hql("""
     select  d_year
     ,item.i_category_id
     ,item.i_category
@@ -231,7 +231,7 @@ class TpcDsQueries(
   ,i_category
   limit 100""")
 
-  val q43 = hql("""
+  lazy val q43 = hql("""
     select  s_store_name, s_store_id,
     sum(case when (d_day_name='Sunday') then ss_sales_price else null end) sun_sales,
   sum(case when (d_day_name='Monday') then ss_sales_price else null end) mon_sales,
@@ -250,7 +250,7 @@ class TpcDsQueries(
   order by s_store_name, s_store_id,sun_sales,mon_sales,tue_sales,wed_sales,thu_sales,fri_sales,sat_sales
   limit 100""")
 
-  val q46 = hql("""
+  lazy val q46 = hql("""
     select  c_last_name
     ,c_first_name
     ,ca_city
@@ -286,7 +286,7 @@ class TpcDsQueries(
   ,ss_ticket_number
   limit 100""")
 
-  val q52 = hql("""
+  lazy val q52 = hql("""
     select  d_year
     ,item.i_brand_id brand_id
     ,item.i_brand brand
@@ -306,7 +306,7 @@ class TpcDsQueries(
     ,brand_id
       limit 100""")
 
-  val q55 = hql("""
+  lazy val q55 = hql("""
     select  i_brand_id as brand_id, i_brand as brand,
     sum(store_sales.ss_ext_sales_price) ext_price
       from date_dim
@@ -320,7 +320,7 @@ class TpcDsQueries(
   order by ext_price desc, brand_id
   limit 100 """)
 
-  val q59 = hql(
+  lazy val q59 = hql(
     """
       |select
       |  s_store_name1,
@@ -423,7 +423,7 @@ class TpcDsQueries(
       |limit 100
     """.stripMargin)
 
-  val q68 = hql("""
+  lazy val q68 = hql("""
     select  c_last_name ,c_first_name ,ca_city
     ,bought_city ,ss_ticket_number ,extended_price
     ,extended_tax ,list_price
@@ -455,7 +455,7 @@ class TpcDsQueries(
   ,ss_ticket_number
   limit 100""")
 
-  val q73 = hql("""
+  lazy val q73 = hql("""
     select c_last_name
     ,c_first_name
     ,c_salutation
@@ -484,7 +484,7 @@ class TpcDsQueries(
   cnt between 5 and 10
   order by cnt desc""")
 
-  val q79 = hql("""
+  lazy val q79 = hql("""
     select
     c_last_name,c_first_name,substr(s_city,1,30) as s_city,ss_ticket_number,amt,profit
     from
@@ -507,7 +507,7 @@ class TpcDsQueries(
   order by c_last_name,c_first_name,s_city, profit
   limit 100""")
 
-  val qSsMax = hql(
+  lazy val qSsMax = hql(
     """
       |select
       |  count(*) as total,
